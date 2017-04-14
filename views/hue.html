@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>hue Controller</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<h1>hue Controller</h1>
+
+<div id="response">
+    Response: <pre></pre>
+</div>
+
+<form id="light">
+    <select id="lightId" name="lightId">
+        <option value=4>Light One</option>
+        <option value=5>Light Two</option>
+    </select>
+    <select id="lightOn" name="lightOn">
+        <option value=0>OFF</option>
+        <option value=1>ON</option>
+    </select>
+    <input type="text" id="lightBri" name="lightBri" placeholder="Brightness" />
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    $(document).ready(function () {
+        function processForm(e){
+            $.ajax({
+                url: '/lights/' + $('#lightId').val(),
+                dataType: 'json',
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    on: !!Number($('#lightOn').val()),
+                    bri: Number($('#lightBri').val())
+                }),
+                processData: false,
+                success: function( data, textStatus, jQxhr ){
+                    $('#response pre').html( JSON.stringify( data ) );
+                },
+                error: function( jqXhr, textStatus, errorThrown ){
+                    console.log( errorThrown );
+                }
+            });
+            e.preventDefault();
+        }
+        $('#light').submit(processForm);
+    });
+
+</script>
+
+</body>
+</html>
